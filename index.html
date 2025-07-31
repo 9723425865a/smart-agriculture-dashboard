@@ -52,6 +52,19 @@
       font-size: 2em;
       font-weight: bold;
     }
+    .progress-bar {
+      height: 10px;
+      background: #c8e6c9;
+      border-radius: 5px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #388e3c;
+      transition: width 0.5s ease-in-out;
+    }
     .badge {
       padding: 5px 10px;
       border-radius: 12px;
@@ -81,17 +94,39 @@
 </head>
 <body>
   <header>
-    <img src="https://www.spuvvn.edu/orbit-cdn/uploads/logo.jpeg" alt="SPU Logo" width="150">
+    <img src="https://upload.wikimedia.org/wikipedia/en/7/75/Sardar_Patel_University_logo.png" alt="SPU Logo" />
     <h1>Smart Agriculture Dashboard</h1>
     <p>Real-time IoT-based Monitoring using ESP32 + ThingSpeak</p>
   </header>
 
   <div class="container">
-    <div class="card" onclick="openGraph(1)"><h2>Soil Moisture</h2><div id="moisture" class="value">--%</div></div>
-    <div class="card" onclick="openGraph(2)"><h2>Temperature</h2><div id="temperature" class="value">--°C</div></div>
-    <div class="card" onclick="openGraph(3)"><h2>Humidity</h2><div id="humidity" class="value">--%</div></div>
-    <div class="card" onclick="openGraph(4)"><h2>NPK</h2><div class="value">N: <span id="n">--</span> P: <span id="p">--</span> K: <span id="k">--</span></div></div>
-    <div class="card" onclick="openGraph(7)"><h2>Pump Status</h2><div id="pump" class="value">--</div><div id="pumpBadge" class="badge">Unknown</div></div>
+    <div class="card" onclick="openGraph(1)">
+      <h2>Soil Moisture</h2>
+      <div id="moisture" class="value">--%</div>
+      <div class="progress-bar"><div id="moistureBar" class="progress-fill"></div></div>
+    </div>
+    <div class="card" onclick="openGraph(2)">
+      <h2>Temperature</h2>
+      <div id="temperature" class="value">--°C</div>
+      <div class="progress-bar"><div id="temperatureBar" class="progress-fill"></div></div>
+    </div>
+    <div class="card" onclick="openGraph(3)">
+      <h2>Humidity</h2>
+      <div id="humidity" class="value">--%</div>
+      <div class="progress-bar"><div id="humidityBar" class="progress-fill"></div></div>
+    </div>
+    <div class="card" onclick="openGraph(4)">
+      <h2>NPK</h2>
+      <div class="value">N: <span id="n">--</span> P: <span id="p">--</span> K: <span id="k">--</span></div>
+      <div class="progress-bar"><div id="nBar" class="progress-fill"></div></div>
+      <div class="progress-bar"><div id="pBar" class="progress-fill"></div></div>
+      <div class="progress-bar"><div id="kBar" class="progress-fill"></div></div>
+    </div>
+    <div class="card" onclick="openGraph(7)">
+      <h2>Pump Status</h2>
+      <div id="pump" class="value">--</div>
+      <div id="pumpBadge" class="badge">Unknown</div>
+    </div>
   </div>
 
   <footer>
@@ -112,12 +147,27 @@
         const data = await res.json();
         const feed = data.feeds[0];
 
-        document.getElementById("moisture").textContent = feed.field1 + "%";
-        document.getElementById("temperature").textContent = feed.field2 + "°C";
-        document.getElementById("humidity").textContent = feed.field3 + "%";
-        document.getElementById("n").textContent = feed.field4;
-        document.getElementById("p").textContent = feed.field5;
-        document.getElementById("k").textContent = feed.field6;
+        const moisture = parseFloat(feed.field1);
+        const temperature = parseFloat(feed.field2);
+        const humidity = parseFloat(feed.field3);
+        const n = parseFloat(feed.field4);
+        const p = parseFloat(feed.field5);
+        const k = parseFloat(feed.field6);
+
+        document.getElementById("moisture").textContent = moisture + "%";
+        document.getElementById("temperature").textContent = temperature + "°C";
+        document.getElementById("humidity").textContent = humidity + "%";
+        document.getElementById("n").textContent = n;
+        document.getElementById("p").textContent = p;
+        document.getElementById("k").textContent = k;
+
+        document.getElementById("moistureBar").style.width = Math.min(moisture, 100) + "%";
+        document.getElementById("temperatureBar").style.width = Math.min(temperature * 2, 100) + "%";
+        document.getElementById("humidityBar").style.width = Math.min(humidity, 100) + "%";
+
+        document.getElementById("nBar").style.width = Math.min(n, 100) + "%";
+        document.getElementById("pBar").style.width = Math.min(p, 100) + "%";
+        document.getElementById("kBar").style.width = Math.min(k, 100) + "%";
 
         const pumpStatus = feed.field7 === "1";
         document.getElementById("pump").textContent = pumpStatus ? "ON" : "OFF";
