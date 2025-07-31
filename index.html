@@ -12,12 +12,18 @@
       margin: 0;
       padding: 0;
     }
-    h1 {
-      text-align: center;
-      padding: 20px;
-      color: white;
+    header {
       background: #2e7d32;
-      margin: 0;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    header img {
+      height: 60px;
+      position: absolute;
+      top: 10px;
+      left: 20px;
     }
     .container {
       display: grid;
@@ -32,6 +38,11 @@
       padding: 20px;
       text-align: center;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.03);
     }
     .card h2 {
       margin: 10px 0;
@@ -55,17 +66,40 @@
       background: #ef5350;
       color: #fff;
     }
+    footer {
+      background: #1b5e20;
+      color: white;
+      padding: 20px;
+      font-size: 14px;
+      text-align: center;
+    }
+    footer a {
+      color: #aed581;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <h1>Smart Agriculture Dashboard</h1>
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/en/7/75/Sardar_Patel_University_logo.png" alt="SPU Logo" />
+    <h1>Smart Agriculture Dashboard</h1>
+    <p>Real-time IoT-based Monitoring using ESP32 + ThingSpeak</p>
+  </header>
+
   <div class="container">
-    <div class="card"><h2>Soil Moisture</h2><div id="moisture" class="value">--%</div></div>
-    <div class="card"><h2>Temperature</h2><div id="temperature" class="value">--°C</div></div>
-    <div class="card"><h2>Humidity</h2><div id="humidity" class="value">--%</div></div>
-    <div class="card"><h2>NPK</h2><div class="value">N: <span id="n">--</span> P: <span id="p">--</span> K: <span id="k">--</span></div></div>
-    <div class="card"><h2>Pump Status</h2><div id="pump" class="value">--</div><div id="pumpBadge" class="badge">Unknown</div></div>
+    <div class="card" onclick="openGraph(1)"><h2>Soil Moisture</h2><div id="moisture" class="value">--%</div></div>
+    <div class="card" onclick="openGraph(2)"><h2>Temperature</h2><div id="temperature" class="value">--°C</div></div>
+    <div class="card" onclick="openGraph(3)"><h2>Humidity</h2><div id="humidity" class="value">--%</div></div>
+    <div class="card" onclick="openGraph(4)"><h2>NPK</h2><div class="value">N: <span id="n">--</span> P: <span id="p">--</span> K: <span id="k">--</span></div></div>
+    <div class="card" onclick="openGraph(7)"><h2>Pump Status</h2><div id="pump" class="value">--</div><div id="pumpBadge" class="badge">Unknown</div></div>
   </div>
+
+  <footer>
+    <strong>Project:</strong> Smart Agriculture Monitoring System<br>
+    <strong>Developed By:</strong> P.G. Department of Electronics, <a href="https://www.spuvvn.edu" target="_blank">Sardar Patel University</a><br>
+    Powered by ESP32, RS485, DHT22, NPK Sensor, and ThingSpeak<br>
+    <small>© 2025 Sardar Patel University. All rights reserved.</small>
+  </footer>
 
   <script>
     const channelID = "2681263";
@@ -93,6 +127,10 @@
       } catch (err) {
         console.error("Error fetching data:", err);
       }
+    }
+
+    function openGraph(fieldNum) {
+      window.open(`https://thingspeak.com/channels/${channelID}/charts/${fieldNum}?bgcolor=%23ffffff&color=%2300acc1&dynamic=true&type=line`, '_blank');
     }
 
     setInterval(fetchData, 5000);
